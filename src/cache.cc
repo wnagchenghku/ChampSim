@@ -3,6 +3,9 @@
 
 uint64_t l2pf_access = 0;
 
+#define PREF_CLASS_MASK 0xF00
+#define NUM_OF_STRIDE_BITS 8
+
 void CACHE::handle_fill()
 {
     // handle fill
@@ -41,6 +44,16 @@ void CACHE::handle_fill()
             // COLLECT STATS
             sim_miss[fill_cpu][MSHR.entry[mshr_index].type]++;
             sim_access[fill_cpu][MSHR.entry[mshr_index].type]++;
+
+
+            if (cache_type == IS_L1D) {
+               if (MSHR.entry[mshr_index].late_pref == 1) {
+                  int temp_pf_class = (MSHR.entry[mshr_index].pf_metadata & PREF_CLASS_MASK) >> NUM_OF_STRIDE_BITS;
+                  if (temp_pf_class < 5) {
+                     pref_late[cpu][((MSHR.entry[mshr_index].pf_metadata & PREF_CLASS_MASK) >> NUM_OF_STRIDE_BITS)]++;
+                  }
+               }
+            }
 
             // check fill level
             if (MSHR.entry[mshr_index].fill_level < fill_level) {
@@ -617,6 +630,10 @@ void CACHE::handle_read()
                 if (block[set][way].prefetch) {
                     pf_useful++;
                     block[set][way].prefetch = 0;
+
+                    if (block[set][way].pref_class < 5) {
+                        pref_useful[cpu][block[set][way].pref_class]++;
+                    }
                 }
                 block[set][way].used = 1;
 

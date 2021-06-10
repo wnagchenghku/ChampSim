@@ -97,6 +97,10 @@ class CACHE : public MEMORY {
              pf_useless,
              pf_fill;
 
+    uint64_t pref_useful[NUM_CPUS][6],
+             pref_filled[NUM_CPUS][6],
+             pref_late[NUM_CPUS][6];
+
     // queues
     PACKET_QUEUE WQ{NAME + "_WQ", WQ_SIZE}, // write queue
                  RQ{NAME + "_RQ", RQ_SIZE}, // read queue
@@ -156,6 +160,16 @@ class CACHE : public MEMORY {
         pf_useful = 0;
         pf_useless = 0;
         pf_fill = 0;
+
+
+        for (int i = 0; i < NUM_CPUS; i++) {
+            for (int j = 0; j < 6; j++) {
+                pref_uself[i][j] = 0;
+                pref_filled[i][j] = 0;
+                pref_late[i][j] = 0;
+            }
+        }
+           
     };
 
     // destructor
