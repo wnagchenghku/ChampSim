@@ -164,7 +164,7 @@ class CACHE : public MEMORY {
 
         for (int i = 0; i < NUM_CPUS; i++) {
             for (int j = 0; j < 6; j++) {
-                pref_uself[i][j] = 0;
+                pref_useful[i][j] = 0;
                 pref_filled[i][j] = 0;
                 pref_late[i][j] = 0;
             }

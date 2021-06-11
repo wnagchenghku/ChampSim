@@ -16,7 +16,8 @@ class BLOCK {
     int delta,
         depth,
         signature,
-        confidence;
+        confidence,
+        pref_class;
 
     uint64_t address,
              full_addr,
@@ -38,7 +39,8 @@ class BLOCK {
         delta = 0;
         depth = 0;
         signature = 0;
-        confidence = 0;
+        confidence = 0,
+        pref_class = 0;
 
         address = 0;
         full_addr = 0;
@@ -83,7 +85,8 @@ class PACKET {
         delta,
         depth,
         signature,
-        confidence;
+        confidence,
+        late_pref;
 
     uint32_t pf_metadata;
 
@@ -139,7 +142,8 @@ class PACKET {
         delta = 0;
         depth = 0;
         signature = 0;
-        confidence = 0;
+        confidence = 0,
+        late_pref = 0;
 
 #if 0
         for (uint32_t i=0; i<ROB_SIZE; i++) {

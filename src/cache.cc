@@ -787,6 +787,10 @@ void CACHE::handle_read()
                             MSHR.entry[mshr_index].event_cycle = prior_event_cycle;
                         }
 
+                        if (cache_type == IS_L1D) {
+                           MSHR.entry[mshr_index].late_pref = 1;
+                        }
+
                         MSHR_MERGED[RQ.entry[index].type]++;
 
                         DP ( if (warmup_complete[read_cpu]) {
@@ -1112,8 +1116,18 @@ void CACHE::fill_cache(uint32_t set, uint32_t way, PACKET *packet)
     block[set][way].prefetch = (packet->type == PREFETCH) ? 1 : 0;
     block[set][way].used = 0;
 
-    if (block[set][way].prefetch)
+    block[set][way].pref_class = ((packet->pf_metadata & PREF_CLASS_MASK) >> NUM_OF_STRIDE_BITS);
+
+    if (block[set][way].prefetch) {
         pf_fill++;
+
+        if (cache_type == IS_L1D) {
+            if (block[set][way].pref_class < 5) {
+                pref_filled[cpu][block[set][way].pref_class]++;
+            }
+        }
+     }
+        
 
     block[set][way].delta = packet->delta;
     block[set][way].depth = packet->depth;
